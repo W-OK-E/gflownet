@@ -278,7 +278,13 @@ class MolBuildingEnvContext(GraphBuildingEnvContext):
                 remove_node_mask[i] = 1
             for k, sl in zip(self.atom_attrs, self.atom_attr_slice):
                 # idx > 0 means that the attribute is not the default value
-                idx = self.atom_attr_values[k].index(ad[k]) if k in ad else 0
+                try:
+                    idx = self.atom_attr_values[k].index(ad[k]) if k in ad else 0
+                except Exception as err:
+                    print(err.args)
+                    print("The current node:",ad)
+                    print("Attribute being checked :",k,"The current node's v value:",ad[k])
+                    print("Current graph",g)
                 x[i, sl + idx] = 1
                 if k == "v":
                     continue
