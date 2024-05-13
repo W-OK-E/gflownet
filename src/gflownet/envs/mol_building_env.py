@@ -23,11 +23,11 @@ class MolBuildingEnvContext(GraphBuildingEnvContext):
     def __init__(
         self,
         #atoms=["C", "N", "O", "F", "P", "S"], Adding Cl,Br and I 
-        atoms=["C", "N", "O", "F", "P", "S","Cl","Br","I"],
+        atoms=["C", "N", "O", "F", "P", "S","Cl","Br","I","Si"],
         num_cond_dim=0,
         chiral_types=DEFAULT_CHIRAL_TYPES,
         charges=[0, 1, -1],
-        expl_H_range=[0, 5],
+        expl_H_range=[0,1,2,3,4,5],
         allow_explicitly_aromatic=False,
         allow_5_valence_nitrogen=False,
         num_rw_feat=0,
@@ -281,10 +281,14 @@ class MolBuildingEnvContext(GraphBuildingEnvContext):
                 try:
                     idx = self.atom_attr_values[k].index(ad[k]) if k in ad else 0
                 except Exception as err:
-                    print(err.args)
-                    print("The current node:",ad)
-                    print("Attribute being checked :",k,"The current node's v value:",ad[k])
-                    print("Current graph",g)
+                    if(not(k == 'v')):
+                        print(err.args)
+                        print("The current node:",ad)
+                        print("Attribute being checked :",k,"The current node's v value:",ad[k])
+                        print("Current graph",g)
+                    else:
+                        print("Atom to add:",ad[k])
+                    idx = 0
                 x[i, sl + idx] = 1
                 if k == "v":
                     continue
