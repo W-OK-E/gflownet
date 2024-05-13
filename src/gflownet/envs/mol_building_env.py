@@ -23,7 +23,7 @@ class MolBuildingEnvContext(GraphBuildingEnvContext):
     def __init__(
         self,
         #atoms=["C", "N", "O", "F", "P", "S"], Adding Cl,Br and I 
-        atoms=["C", "N", "O", "F", "P", "S","Cl","Br","I","Si"],
+        atoms=["C", "N", "O", "F", "P", "S","Cl","Br","I","Si","Zn"],
         num_cond_dim=0,
         chiral_types=DEFAULT_CHIRAL_TYPES,
         charges=[0, 1, -1],
