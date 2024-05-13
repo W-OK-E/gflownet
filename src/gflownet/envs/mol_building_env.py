@@ -22,11 +22,12 @@ class MolBuildingEnvContext(GraphBuildingEnvContext):
 
     def __init__(
         self,
-        atoms=["C", "N", "O", "F", "P", "S"],
+        #atoms=["C", "N", "O", "F", "P", "S"], Adding Cl,Br and I 
+        atoms=["C", "N", "O", "F", "P", "S","Cl","Br","I"],
         num_cond_dim=0,
         chiral_types=DEFAULT_CHIRAL_TYPES,
         charges=[0, 1, -1],
-        expl_H_range=[0, 1],
+        expl_H_range=[0, 5],
         allow_explicitly_aromatic=False,
         allow_5_valence_nitrogen=False,
         num_rw_feat=0,
