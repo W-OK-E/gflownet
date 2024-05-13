@@ -19,11 +19,12 @@ class MolBuildingEnvContext(GraphBuildingEnvContext):
 
     This context specifies how to create molecules atom-by-atom (and attribute-by-attribute).
     """
-
+    
     def __init__(
         self,
-        #atoms=["C", "N", "O", "F", "P", "S"], Adding Cl,Br and I 
-        atoms=["C", "N", "O", "F", "P", "S","Cl","Br","I","Si","Zn"],
+        #atoms=["C", "N", "O", "F", "P", "S"], Adding all the necessary atoms below
+
+        atoms=['H','Li','Na','K','Be','Mg','Ca','Sr','Ba','Sc','Y','La','B','Al','Ga','In','C','Si','Ge','N','P','As','O','S','Se','F','Cl','Br','I'],
         num_cond_dim=0,
         chiral_types=DEFAULT_CHIRAL_TYPES,
         charges=[0, 1, -1],
