@@ -24,9 +24,9 @@ class MolBuildingEnvContext(GraphBuildingEnvContext):
         self,
         #atoms=["C", "N", "O", "F", "P", "S"], Adding all the necessary atoms below
 
-        # atoms=['H','Li','Na','K','Be','Mg','Ca','Sr','Ba','Sc','Y','La','B','Al','Ga','In',
-        #        'C','Si','Ge','N','P','As','O','S','Se','F','Cl','Br','I','Fe','Co','Ni','Cu',
-        #        'Zn','Ag','Pd','Pt','Hg','Sb','Pb','Bi','Mn'],
+        atoms=['H','Li','Na','K','Be','Mg','Ca','Sr','Ba','Sc','Y','La','B','Al','Ga','In',
+               'C','Si','Ge','N','P','As','O','S','Se','F','Cl','Br','I','Fe','Co','Ni','Cu',
+               'Zn','Ag','Pd','Pt','Hg','Sb','Pb','Bi','Mn'],
         num_cond_dim=0,
         chiral_types=DEFAULT_CHIRAL_TYPES,
         charges=[0, 1, -1,2,-2,3,-3],
