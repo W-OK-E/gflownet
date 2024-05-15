@@ -47,8 +47,8 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
         count = 0
         for i in range(len(smi)):
             try:
-                mol = Chem.MolFromSmiles(s[i])
-                self.frags_smi.append(mol)
+                mol = Chem.MolFromSmiles(smi[i])
+                self.frags_smi.append(smi[i)
                 self.frags_mol.append(mol)
                 self.frags_stems.append(stems[i])
             except:
