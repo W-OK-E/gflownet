@@ -320,8 +320,9 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
         all_matches = {}
         for fragidx, frag in self.sorted_frags:
             all_matches[fragidx] = mol.GetSubstructMatches(frag, uniquify=False)
-        return _recursive_decompose(self, mol, all_matches, {}, [], [], self.max_frags)
-
+        graph = _recursive_decompose(self, mol, all_matches, {}, [], [], self.max_frags)
+        print("One recursive decompose done ",type(graph))
+        return graph
     def graph_to_obj(self, g: Graph) -> Chem.Mol:
         """Convert a Graph to an RDKit molecule
 
