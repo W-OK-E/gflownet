@@ -44,6 +44,7 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
         self.frags_smi = []
         self.frags_mol = []
         self.frags_stems = []
+        count = 0
         for i in range(len(smi)):
             try:
                 mol = Chem.MolFromSmiles(s[i])
@@ -51,7 +52,8 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
                 self.frags_mol.append(mol)
                 self.frags_stems.append(stems[i])
             except:
-                pass
+                count += 1
+        print("Didn't process" ,count ,"fragments")
         self.frags_numatm = [m.GetNumAtoms() for m in self.frags_mol]
         self.num_stem_acts = most_stems = max(map(len, self.frags_stems))
         self.action_map = [
