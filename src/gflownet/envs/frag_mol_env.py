@@ -51,7 +51,7 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
                 self.frags_smi.append(smi[i])
                 self.frags_mol.append(mol)
                 self.frags_stems.append(stems[i])
-            else
+            else:
                 count += 1
         print("Didn't process" ,count ,"fragments")
         self.frags_numatm = [m.GetNumAtoms() for m in self.frags_mol]
