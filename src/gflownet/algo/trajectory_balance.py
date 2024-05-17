@@ -557,11 +557,13 @@ class TrajectoryBalance(GFNAlgorithm):
                 epsilon = torch.tensor([self.cfg.epsilon], device=dev).float()
                 numerator = torch.logaddexp(numerator, epsilon)
                 denominator = torch.logaddexp(denominator, epsilon)
+            print("Calc Trajectory Loss:",traj_losses)
             traj_losses = self._loss(numerator - denominator, self.tb_loss)
-
+            print("Line 562",traj_losses)
         # Normalize losses by trajectory length
         if self.length_normalize_losses:
             traj_losses = traj_losses / batch.traj_lens
+        print("Line 566",traj_losses)
         if self.reward_normalize_losses:
             # multiply each loss by how important it is, using R as the importance factor
             # factor = Rp.exp() / Rp.exp().sum()
@@ -571,7 +573,7 @@ class TrajectoryBalance(GFNAlgorithm):
             # * num_trajs because we're doing a convex combination, and a .mean() later, which would
             # undercount (by 2N) the contribution of each loss
             traj_losses = factor * traj_losses * num_trajs
-
+        print("Line 576",traj_losses)
         if self.cfg.bootstrap_own_reward:
             num_bootstrap = num_bootstrap or len(log_rewards)
             reward_losses = self._loss(log_rewards[:num_bootstrap] - log_reward_preds[:num_bootstrap], self.reward_loss)
@@ -582,6 +584,7 @@ class TrajectoryBalance(GFNAlgorithm):
 
         n_loss = n_loss.mean()
         tb_loss = traj_losses.mean()
+        print("Line 587",tb_loss)
         print("tb_loss",tb_loss,"reward_loss",reward_loss,"n_loss",n_loss)
         loss = tb_loss + reward_loss + self.cfg.n_loss_multiplier * n_loss
         info = {
