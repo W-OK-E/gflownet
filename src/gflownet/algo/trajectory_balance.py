@@ -557,7 +557,6 @@ class TrajectoryBalance(GFNAlgorithm):
                 epsilon = torch.tensor([self.cfg.epsilon], device=dev).float()
                 numerator = torch.logaddexp(numerator, epsilon)
                 denominator = torch.logaddexp(denominator, epsilon)
-            print("Calc Trajectory Loss:",traj_losses)
             traj_losses = self._loss(numerator - denominator, self.tb_loss)
             print("Line 562",traj_losses)
         # Normalize losses by trajectory length
