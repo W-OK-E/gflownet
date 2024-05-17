@@ -555,7 +555,11 @@ class TrajectoryBalance(GFNAlgorithm):
             if self.cfg.epsilon is not None:
                 # Numerical stability epsilon
                 epsilon = torch.tensor([self.cfg.epsilon], device=dev).float()
+                print("Episilon:",epsilon)
+                print("Numerator:",numerator)
+                print("Denominator:",denominator)
                 numerator = torch.logaddexp(numerator, epsilon)
+                
                 denominator = torch.logaddexp(denominator, epsilon)
             traj_losses = self._loss(numerator - denominator, self.tb_loss)
             print("Line 562",traj_losses)
