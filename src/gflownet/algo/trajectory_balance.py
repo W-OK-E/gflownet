@@ -737,6 +737,7 @@ class TrajectoryBalance(GFNAlgorithm):
         if loss_fn is None:
             loss_fn = self.cfg.loss_fn
         if loss_fn == LossFN.MSE:
+            print("Loss Function:MSE")
             return x * x
         elif loss_fn == LossFN.MAE:
             return torch.abs(x)
