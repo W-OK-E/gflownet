@@ -582,6 +582,7 @@ class TrajectoryBalance(GFNAlgorithm):
 
         n_loss = n_loss.mean()
         tb_loss = traj_losses.mean()
+        print("tb_loss",tb_loss,"reward_loss",reward_loss,"n_loss",n_loss)
         loss = tb_loss + reward_loss + self.cfg.n_loss_multiplier * n_loss
         info = {
             "offline_loss": traj_losses[: batch.num_offline].mean() if batch.num_offline > 0 else 0,
