@@ -47,6 +47,7 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
         count = 0
         for i in range(len(smi)):
             mol = Chem.MolFromSmiles(smi[i])
+            print("Index:",i)
             if(mol is not None):
                 self.frags_smi.append(smi[i])
                 self.frags_mol.append(mol)
