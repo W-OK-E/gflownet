@@ -398,7 +398,8 @@ class TrajectoryBalance(GFNAlgorithm):
 
         fwd_cat: GraphActionCategorical  # The per-state cond_info
         batched_cond_info = cond_info[batch_idx] if cond_info is not None else None
-
+        print("Cond info: ",cond_info)
+        print("Batched Cond Info:",batched_cond_info)
         # Forward pass of the model, returns a GraphActionCategorical representing the forward
         # policy P_F, optionally a backward policy P_B, and per-graph outputs (e.g. F(s) in SubTB).
         if self.cfg.do_parameterize_p_b:
