@@ -373,7 +373,9 @@ class TrajectoryBalance(GFNAlgorithm):
           batch of graphs inputs as per constructed by `self.construct_batch`
         num_bootstrap: int
           the number of trajectories for which the reward loss is computed. Ignored if 0."""
+        print("In the compute batch loss function")
         dev = batch.x.device
+        print("post device")
         # A single trajectory is comprised of many graphs
         num_trajs = int(batch.traj_lens.shape[0])
         log_rewards = batch.log_rewards
@@ -384,7 +386,7 @@ class TrajectoryBalance(GFNAlgorithm):
         ).float()
         cond_info = getattr(batch, "cond_info", None)
         invalid_mask = 1 - batch.is_valid
-
+        print("Pose cond info")
         # This index says which trajectory each graph belongs to, so
         # it will look like [0,0,0,0,1,1,1,2,...] if trajectory 0 is
         # of length 4, trajectory 1 of length 3, and so on.
@@ -395,7 +397,7 @@ class TrajectoryBalance(GFNAlgorithm):
         # The position of the first graph of each trajectory
         first_graph_idx = shift_right(traj_cumlen)
         final_graph_idx_1 = torch.maximum(final_graph_idx - 1, first_graph_idx)
-
+        print("Post traj_cumlen")
         fwd_cat: GraphActionCategorical  # The per-state cond_info
         batched_cond_info = cond_info[batch_idx] if cond_info is not None else None
         print("Cond info: ",cond_info)
