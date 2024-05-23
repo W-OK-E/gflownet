@@ -41,9 +41,19 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
             smi, stems = zip(*bengio2021flow.FRAGMENTS)
         else:
             smi, stems = zip(*fragments)
-        self.frags_smi = smi
-        self.frags_mol = [Chem.MolFromSmiles(i) for i in self.frags_smi]
-        self.frags_stems = stems
+        self.frags_smi = []
+        self.frags_mol = []
+        self.frags_stems = []
+        count = 0
+        for i in range(len(smi)):
+            mol = Chem.MolFromSmiles(smi[i])
+            if(mol is not None):
+                self.frags_smi.append(smi[i])
+                self.frags_mol.append(mol)
+                self.frags_stems.append(stems[i])
+            else:
+                count += 1
+        print("Didn't process" ,count ,"fragments")
         self.frags_numatm = [m.GetNumAtoms() for m in self.frags_mol]
         self.num_stem_acts = most_stems = max(map(len, self.frags_stems))
         self.action_map = [
