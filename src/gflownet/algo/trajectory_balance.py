@@ -373,9 +373,7 @@ class TrajectoryBalance(GFNAlgorithm):
           batch of graphs inputs as per constructed by `self.construct_batch`
         num_bootstrap: int
           the number of trajectories for which the reward loss is computed. Ignored if 0."""
-        print("In the compute batch loss function")
         dev = batch.x.device
-        print("post device")
         # A single trajectory is comprised of many graphs
         num_trajs = int(batch.traj_lens.shape[0])
         log_rewards = batch.log_rewards
@@ -386,7 +384,7 @@ class TrajectoryBalance(GFNAlgorithm):
         ).float()
         cond_info = getattr(batch, "cond_info", None)
         invalid_mask = 1 - batch.is_valid
-        print("Pose cond info")
+
         # This index says which trajectory each graph belongs to, so
         # it will look like [0,0,0,0,1,1,1,2,...] if trajectory 0 is
         # of length 4, trajectory 1 of length 3, and so on.
@@ -397,11 +395,10 @@ class TrajectoryBalance(GFNAlgorithm):
         # The position of the first graph of each trajectory
         first_graph_idx = shift_right(traj_cumlen)
         final_graph_idx_1 = torch.maximum(final_graph_idx - 1, first_graph_idx)
-        print("Post traj_cumlen")
+
         fwd_cat: GraphActionCategorical  # The per-state cond_info
         batched_cond_info = cond_info[batch_idx] if cond_info is not None else None
-        print("Cond info: ",cond_info)
-        print("Batched Cond Info:",batched_cond_info)
+
         # Forward pass of the model, returns a GraphActionCategorical representing the forward
         # policy P_F, optionally a backward policy P_B, and per-graph outputs (e.g. F(s) in SubTB).
         if self.cfg.do_parameterize_p_b:
@@ -529,7 +526,7 @@ class TrajectoryBalance(GFNAlgorithm):
                 traj_losses = self.subtb_cum(log_p_F, log_p_B, per_graph_out[:, 0], clip_log_R, batch.traj_lens)
             else:
                 traj_losses = self.subtb_loss_fast(log_p_F, log_p_B, per_graph_out[:, 0], clip_log_R, batch.traj_lens)
-            print("Line 529:",traj_losses)
+
             # The position of the first graph of each trajectory
             first_graph_idx = torch.zeros_like(batch.traj_lens)
             torch.cumsum(batch.traj_lens[:-1], 0, out=first_graph_idx[1:])
@@ -540,7 +537,6 @@ class TrajectoryBalance(GFNAlgorithm):
             F_sm[final_graph_idx] = clip_log_R
             transition_losses = self._loss(F_sn + log_p_F - F_sm - log_p_B)
             traj_losses = scatter(transition_losses, batch_idx, dim=0, dim_size=num_trajs, reduce="sum")
-            print("Line 540:",traj_losses)
             first_graph_idx = torch.zeros_like(batch.traj_lens)
             torch.cumsum(batch.traj_lens[:-1], 0, out=first_graph_idx[1:])
             log_Z = per_graph_out[first_graph_idx, 0]
@@ -548,32 +544,24 @@ class TrajectoryBalance(GFNAlgorithm):
             # Compute log numerator and denominator of the TB objective
             numerator = log_Z + traj_log_p_F
             denominator = clip_log_R + traj_log_p_B
-            print("Line 548:",numerator,denominator)
+
             if self.mask_invalid_rewards:
                 # Instead of being rude to the model and giving a
                 # logreward of -100 what if we say, whatever you think the
                 # logprobablity of this trajetcory is it should be smaller
                 # (thus the `numerator - 1`). Why 1? Intuition?
                 denominator = denominator * (1 - invalid_mask) + invalid_mask * (numerator.detach() - 1)
-                print("Line 555: Denominator:",denominator)
 
             if self.cfg.epsilon is not None:
                 # Numerical stability epsilon
                 epsilon = torch.tensor([self.cfg.epsilon], device=dev).float()
-                print("Episilon:",epsilon)
-                print("Numerator:",numerator)
-                print("Denominator:",denominator)
                 numerator = torch.logaddexp(numerator, epsilon)
-                
                 denominator = torch.logaddexp(denominator, epsilon)
-            print("Numerator:",numerator)
-            print("Denominator:",denominator)
             traj_losses = self._loss(numerator - denominator, self.tb_loss)
-            print("Line 562",traj_losses)
+
         # Normalize losses by trajectory length
         if self.length_normalize_losses:
             traj_losses = traj_losses / batch.traj_lens
-        print("Line 566",traj_losses)
         if self.reward_normalize_losses:
             # multiply each loss by how important it is, using R as the importance factor
             # factor = Rp.exp() / Rp.exp().sum()
@@ -583,7 +571,7 @@ class TrajectoryBalance(GFNAlgorithm):
             # * num_trajs because we're doing a convex combination, and a .mean() later, which would
             # undercount (by 2N) the contribution of each loss
             traj_losses = factor * traj_losses * num_trajs
-        print("Line 576",traj_losses)
+
         if self.cfg.bootstrap_own_reward:
             num_bootstrap = num_bootstrap or len(log_rewards)
             reward_losses = self._loss(log_rewards[:num_bootstrap] - log_reward_preds[:num_bootstrap], self.reward_loss)
@@ -594,8 +582,6 @@ class TrajectoryBalance(GFNAlgorithm):
 
         n_loss = n_loss.mean()
         tb_loss = traj_losses.mean()
-        print("Line 587",tb_loss)
-        print("tb_loss",tb_loss,"reward_loss",reward_loss,"n_loss",n_loss)
         loss = tb_loss + reward_loss + self.cfg.n_loss_multiplier * n_loss
         info = {
             "offline_loss": traj_losses[: batch.num_offline].mean() if batch.num_offline > 0 else 0,
@@ -740,7 +726,6 @@ class TrajectoryBalance(GFNAlgorithm):
         if loss_fn is None:
             loss_fn = self.cfg.loss_fn
         if loss_fn == LossFN.MSE:
-            print("Loss Function:MSE")
             return x * x
         elif loss_fn == LossFN.MAE:
             return torch.abs(x)
