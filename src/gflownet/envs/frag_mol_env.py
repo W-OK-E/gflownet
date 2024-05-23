@@ -41,20 +41,9 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
             smi, stems = zip(*bengio2021flow.FRAGMENTS)
         else:
             smi, stems = zip(*fragments)
-        self.frags_smi = []
-        self.frags_mol = []
-        self.frags_stems = []
-        count = 0
-        for i in range(len(smi)):
-            mol = Chem.MolFromSmiles(smi[i])
-            print("Index:",i)
-            if(mol is not None):
-                self.frags_smi.append(smi[i])
-                self.frags_mol.append(mol)
-                self.frags_stems.append(stems[i])
-            else:
-                count += 1
-        print("Didn't process" ,count ,"fragments")
+        self.frags_smi = smi
+        self.frags_mol = [Chem.MolFromSmiles(i) for i in self.frags_smi]
+        self.frags_stems = stems
         self.frags_numatm = [m.GetNumAtoms() for m in self.frags_mol]
         self.num_stem_acts = most_stems = max(map(len, self.frags_stems))
         self.action_map = [
@@ -321,9 +310,8 @@ class FragMolBuildingEnvContext(GraphBuildingEnvContext):
         all_matches = {}
         for fragidx, frag in self.sorted_frags:
             all_matches[fragidx] = mol.GetSubstructMatches(frag, uniquify=False)
-        graph = _recursive_decompose(self, mol, all_matches, {}, [], [], self.max_frags)
-        print("One recursive decompose done ",type(graph))
-        return graph
+        return _recursive_decompose(self, mol, all_matches, {}, [], [], self.max_frags)
+
     def graph_to_obj(self, g: Graph) -> Chem.Mol:
         """Convert a Graph to an RDKit molecule
 
@@ -470,8 +458,8 @@ def _recursive_decompose(ctx, m, all_matches, a2f, frags, bonds, max_depth=9, nu
     if numiters is None:
         numiters = [0]
     numiters[0] += 1
-    if numiters[0] > 100000:
-        return None
+    if numiters[0] > 1_000:
+        raise ValueError("too many iterations")
     if max_depth == 0 or len(a2f) == m.GetNumAtoms():
         # try to make a mol, does it work?
         # Did we match all the atoms?
